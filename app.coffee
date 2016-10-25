@@ -145,7 +145,12 @@ class InboundService extends Layer
 			style: header
 			x: 32
 			backgroundColor: "transparent"
-	
+
+		if opts.sla < 80 
+			val.color = "red"
+		else 
+			val.color = "black"
+			
 		slaValue= new Layer
 			superLayer: this
 			width: 152
@@ -162,6 +167,19 @@ class InboundService extends Layer
 			if sla > Utils.randomNumber(80,90)
 				sla = sla + 1
 				slaValue.html = "#{sla}" + "%"
+			else
+				sla = sla - 1 
+				slaValue.html = "#{sla}" + "%"
+				
+			if sla < 80 
+				slaValue.color = "red"
+			else 
+				slaValue.color = "black"
+				
+			if sla <= 67
+				sla = sla + 1
+				slaValue.html = "#{sla}" + "%"
+			
 			if sla == 100
 				clearInterval timer
 
@@ -774,7 +792,6 @@ min=0
 sec=0	
 min = Math.ceil(metricWaitTimeval/60)
 sec = metricWaitTimeval  % 60
-#print min,sec
 
 metricWaitTimeValue = new Layer
 	superLayer: metricWaitTimeCard
@@ -887,6 +904,7 @@ outboundServicesRef = firebase.get "/outboundservices",(services) ->
 		
 
 # To load more options on screen - add service, add agent, screenshot
+###
 sketch.home_more.superLayer = null
 screenshotButton = sketch.Circle0
 
@@ -1171,7 +1189,8 @@ screenshotButton.on Events.Click, ->
 		notificationScreenshotSent.opacity = 1
 	notificationScreenshotSent_ok.on Events.Click, ->
 		notificationScreenshotSent.opacity = 0
-	
+###
+
 # To toggle between inbound and outbound services
 showContent = (content, direction) ->
 	content.visible = true
@@ -1556,6 +1575,7 @@ notifRef = firebase.get "/notifications",(notifs) ->
 		ser.x = 0
 		ser.y = (200)*(notif.id-1)
 
+###
 agentFlag = 0
 agentsRef = firebase.get "/notifagents",(agents) ->
 	agentsArray = _.toArray(agents)
@@ -1570,13 +1590,10 @@ agentsRef = firebase.get "/notifagents",(agents) ->
 		ag.width = 700
 		ag.x = 0
 		ag.y = (ag.height)*(agent.id-1)
+###
 
 # Everything related to the Agents
-
 class Agent extends Layer
-
-
-	
 	sketch.agentAction.opacity = 0
 	sketch.agentActionDropdownServices.opacity = 0
 	sketch.phone_in_talk.opacity = 0
@@ -1597,7 +1614,7 @@ class Agent extends Layer
 		@width= 672
 		@height=192
 		@x = 1110
-		@superLayer = opts.parent
+		@superLayer = sketch.agentContent
 		@style = label
 		@borderWidth = 1
 		@borderColor = "rgba(128,128,128,1)"
@@ -1616,9 +1633,14 @@ class Agent extends Layer
 	
 		min = Math.ceil(opts.currentcall/60)
 		sec = Math.ceil(opts.currentcall % 60)
-		if (sec/10) == 0
+		if Math.floor(sec/10) == 0
 			sec = '0'+sec
-
+			
+		if min > 8
+			agentval.color = "red"
+		else 
+			agentval.color = "black"
+			
 		longestCallVal = new Layer
 			superLayer: this
 			width: 152
@@ -1628,7 +1650,7 @@ class Agent extends Layer
 			style: agentval
 			x: 407
 			backgroundColor: "transparent"
-			
+		
 		ProgressBar = new Layer 
 			superLayer: this
 			width: 400
@@ -1679,7 +1701,27 @@ class Agent extends Layer
 			width: 185
 			height: 45
 			backgroundColor: "transparent"
-			
+
+		totalcurrentcall = opts.currentcall
+		if status.html == "busy"
+			currentCalltimer = Utils.interval 1, -> 
+				totalcurrentcall = totalcurrentcall + 1
+				min = Math.floor(totalcurrentcall/60)
+				sec = totalcurrentcall % 60
+				if sec == 60
+					min = min + 1
+					sec = 0
+				else
+					if Math.floor(sec/10) == 0
+						sec = '0' + sec
+				if min > 8
+					longestCallVal.color = "red"
+					
+				longestCallVal.html =  min + ":" + sec
+				
+				if totalcurrentcall > 1000
+					clearInterval (currentCalltimer)
+
 		dropdown1 = new Layer
 			superLayer: this
 			x: 730
@@ -1726,12 +1768,14 @@ class Agent extends Layer
 		height = this.height 
 		expandedHeight = 800
 
-
 		open = false
 		@on Events.Click, ->
+			print this.superLayer.id
 			if this.superLayer.id == 5
 				index = this.index
+				print index
 				len = sketch.agentContent.children
+				print len
 				if open == false
 					@.animate 
 						properties:
@@ -1812,8 +1856,8 @@ class Agent extends Layer
 								y: sketch.agentAction.y - 200
 						curve: "spring(100,15,0)"
 					open = false
+					
 			else if this.superLayer.id == 54
-				print this.toggle
 				if this.toggle == 0
 					@activate()
 				else
