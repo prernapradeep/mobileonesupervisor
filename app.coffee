@@ -1551,6 +1551,7 @@ sketch.agentActionMessages.on Events.Click, ->
 	for sibling in sketch.chat_icon.siblings
 		sibling.backgroundColor = "transparent"
 		#sibling.backgroundColor = "#FFF"
+        print "hi"
 		showViewContent(sketch.message,"up")
 		hideViewContent(sketch.homeContent)
 		hideViewContent(sketch.notificationContent)
