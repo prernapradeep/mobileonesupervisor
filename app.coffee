@@ -23,7 +23,7 @@ header = {
 	color: "#000",
 	fontFamily: "Lato"
 	fontSize: "48px"
-	fontWeight: "500"
+	fontWeight: "400"
 	textAlign : "left"
 };
 
@@ -56,11 +56,32 @@ label = {
 agentval = {
 	paddingTop: "15px",
 	color: "#000",
-	fontFamily: "Proxima Nova"
+	fontFamily: "Lato"
 	fontSize: "50px"
 	fontWeight: "900"
 	textAlign : "left"
 };
+
+
+servicesExpandedVal = {
+	paddingTop: "25px",
+	color: "#000",
+	fontFamily: "Lato"
+	fontSize: "32pt"
+	fontWeight: "700"
+	textAlign : "left"
+};
+
+servicesExpandedLabel = {
+	paddingTop: "75px",
+	color: "#757473",
+	fontFamily: "Lato"
+	fontSize: "20px"
+	fontWeight: "400"
+	textAlign : "left"
+};
+
+
 
 {TextLayer} = require 'TextLayer'
 
@@ -161,7 +182,7 @@ class InboundService extends Layer
 			
 			if sla == 100
 				clearInterval timer
-			
+
 		slaLabel = new Layer
 			superLayer: this
 			width: 136
@@ -171,66 +192,144 @@ class InboundService extends Layer
 			x: 32
 			y: 165
 			backgroundColor: "transparent"
+			
+		servicesExpand = new Layer
+			superLayer: this
+			x: 0
+			y: 240
+			width: 672
+			height: 264
+			border: 1
+			opacity: 0
+			backgroundColor: "transparent"
+			
+		abandonRate = new Layer
+			superLayer: servicesExpand 
+			width: 134
+			height: 118
+			x: 55
+			opacity: 0
+			style: servicesExpandedVal
+			html: opts.abandonrate
+			backgroundColor: "transparent"
+			
+		abandonedRateLabel = new Layer
+			superLayer: servicesExpand 
+			width: 134
+			height: 118
+			x: 55
+			opacity: 0
+			style: servicesExpandedLabel
+			html: "ABANDON RATE"
+			backgroundColor: "transparent"
+				
+		liveCalls = new Layer
+			superLayer: servicesExpand 
+			width: 134
+			height: 118	
+			x: 200
+			opacity: 0
+			style: servicesExpandedVal
+			html: opts.livecalls
+			backgroundColor: "transparent"
+			
+			
+		liveCallsLabel = new Layer
+			superLayer: servicesExpand 
+			width: 134
+			height: 118	
+			x: 200
+			opacity: 0
+			style: servicesExpandedLabel
+			html: "LIVE CALLS"
+			backgroundColor: "transparent"
+			
+		longestWait = new Layer
+			superLayer: servicesExpand 
+			width: 134
+			height: 118	
+			x: 365
+			opacity: 0
+			style: servicesExpandedVal
+			html: opts.longestcall
+			backgroundColor: "transparent"
+			
+		longestWaitLabel = new Layer
+			superLayer: servicesExpand 
+			width: 134
+			height: 118	
+			x: 365
+			opacity: 0
+			style: servicesExpandedLabel
+			html: "LONGEST WAIT TIME"
+			backgroundColor: "transparent"
+			
+		avgCallduration = new Layer		
+			superLayer: servicesExpand 
+			width: 134
+			height: 118	
+			x: 515		
+			opacity: 0	
+			style: servicesExpandedVal	
+			html: opts.avgcall
+			backgroundColor: "transparent"
+			
+		avgCalldurationLabel = new Layer		
+			superLayer: servicesExpand 
+			width: 134
+			height: 118	
+			x: 515	
+			opacity: 0	
+			style: servicesExpandedLabel
+			backgroundColor: "transparent"	
+			html: "AVG. CALL DURATION"
+		
 		
 		min = Math.ceil(opts.longestcall/60)
 		sec = Math.ceil(opts.longestcall % 60)
 		if (sec/10) == 0
 			sec = '0'+sec
+					
 
-		###longestCallVal = new Layer
-			superLayer: this
-			width: 152
-			height: 78
-			y: 120
-			html: min + ":" + sec
-			style: val
-			x: 375
-			backgroundColor: "transparent"
-			
-		longestCalltimer = Utils.interval 1, -> 
-			totalcall = totalcall + 1
-			min = Math.ceil(totalcall/60)
-			sec = totalcall % 60
-			if sec == 60
-				min = min + 1
-				sec = 0
-			else
-				if Math.ceil(sec/10) == 0
-					sec = '0' + sec
-			longestCallVal.html =  min + ":" + sec
-			
-			if totalcall > 1000
-				clearInterval (longestCalltimer)###
-
-
-		###longestCallLabel = new Layer
-			superLayer: this
-			width: 300
-			height: 28
-			style: label
-			html: "LONGEST CALL"
-			x: 375
-			y: 180
-			backgroundColor: "transparent"###
-			
-		###ProgressBar = new Layer 
-			superLayer: this
-			width:550
-			height:60
-			originX:0
-			backgroundColor:'#B2B0B0'
-			x: 75
-			y: 250###
-		
-		###agentStatusLabel = new Layer
-			superLayer: this
-			width: 500
-			height: 28
-			style: label
-			html: "AGENT STATUS"
-			x: 75
-			y: 310
-			backgroundColor: "transparent"###
+		serviceDoubleClick = 0
+		@on Events.DoubleClick, () ->
+			if serviceDoubleClick == 0
+				servicesExpand.opacity = 1
+				avgCallduration.opacity = 1
+				longestWait.opacity = 1
+				liveCalls.opacity = 1
+				abandonRate.opacity = 1
+				avgCalldurationLabel.opacity = 1
+				longestWaitLabel.opacity = 1
+				liveCallsLabel.opacity = 1
+				abandonedRateLabel.opacity = 1
+				serviceDoubleClick = 1
+				
+				#length = this.siblings.length
+				for sibling in this.siblings
+					if sibling.index > this.index
+						sibling.y = sibling.y + 144
+						#sibling.height = sibling.y + 264
+						print sibling.index
+					print "hello"
+			else 
+				for sibling in this.siblings
+					if sibling.index > this.index
+						sibling.y = sibling.y - 144
+					#sibling.height = sibling.y + 264			
+				serviceDoubleClick = 0
+				servicesExpand.opacity = 0
+				avgCallduration.opacity = 0
+				longestWait.opacity = 0
+				liveCalls.opacity = 0
+				abandonRate.opacity = 0
+				avgCalldurationLabel.opacity = 0
+				longestWaitLabel.opacity = 0
+				liveCallsLabel.opacity = 0
+				abandonedRateLabel.opacity = 0
+				serviceDoubleClick = 0
+				print "hi"
+				
 			
 		@on Events.Click, () ->
 			##if this layer has been clicked, change toggle to 1
@@ -279,6 +378,10 @@ class InboundService extends Layer
 						ag.x = 0
 						ag.y = (ag.height)*(agent.id-1)
 						
+						
+			
+
+			
 
 #Class for the Outbound services + counter/ticker animation
 class OutboundService extends Layer
@@ -299,7 +402,7 @@ class OutboundService extends Layer
 		super opts
 	
 		@superLayer = outboundscroll.content
-		@width = 672
+		@width = 704
 		@height = 240
 		@idnumber = opts.idnumber
 		@name = opts.name
@@ -312,24 +415,34 @@ class OutboundService extends Layer
 			backgroundColor: "#FFF"
 		}
 		
+		sampleGraph = new Layer
+			superLayer: this
+			width: 358
+			height: 120
+			x: 262
+			y: 82
+			image: "images/sampleGraph.png"
+			backgroundColor: "transparent"
+
+		
 		serviceNameField = new Layer
 			superLayer: this
-			width: 500
-			height: 110
-			y: 20
+			width: 750
+			height: 60
+			y: 28
 			html: opts.name
 			style: header
-			x: 75
+			x: 32
 			backgroundColor: "transparent"
 	
 		slaValue= new Layer
 			superLayer: this
 			width: 152
-			height: 78
-			y: 120
+			height: 86
+			y: 100
 			html: opts.sla + "%"
 			style: val
-			x: 75
+			x: 32
 			backgroundColor: "transparent"
 						
 		sla = this.sla
@@ -341,76 +454,20 @@ class OutboundService extends Layer
 			if sla == 100
 				clearInterval timer
 
-			
 		slaLabel = new Layer
 			superLayer: this
 			width: 136
 			height: 28
 			style: label
 			html: "SLA"
-			x: 75
-			y: 180
+			x: 32
+			y: 165
 			backgroundColor: "transparent"
 		
 		min = Math.ceil(opts.longestcall/60)
 		sec = Math.ceil(opts.longestcall % 60)
 		if (sec/10) == 0
 			sec = '0'+sec
-
-		longestCallVal = new Layer
-			superLayer: this
-			width: 152
-			height: 78
-			y: 120
-			html: min + ":" + sec
-			style: val
-			x: 375
-			backgroundColor: "transparent"
-			
-		longestCalltimer = Utils.interval 1, -> 
-			totalcall = totalcall + 1
-			min = Math.ceil(totalcall/60)
-			sec = totalcall % 60
-			if sec == 60
-				min = min + 1
-				sec = 0
-			else
-				if Math.ceil(sec/10) == 0
-					sec = '0' + sec
-			longestCallVal.html =  min + ":" + sec
-			
-			if totalcall > 1000
-				clearInterval (longestCalltimer)
-
-
-		longestCallLabel = new Layer
-			superLayer: this
-			width: 300
-			height: 28
-			style: label
-			html: "LONGEST CALL"
-			x: 375
-			y: 180
-			backgroundColor: "transparent"
-			
-		ProgressBar = new Layer 
-			superLayer: this
-			width:550
-			height:60
-			originX:0
-			backgroundColor:'#B2B0B0'
-			x: 75
-			y: 250
-		
-		agentStatusLabel = new Layer
-			superLayer: this
-			width: 500
-			height: 28
-			style: label
-			html: "AGENT STATUS"
-			x: 75
-			y: 310
-			backgroundColor: "transparent"
 			
 		@on Events.Click, () ->
 			##if this layer has been clicked, change toggle to 1
@@ -470,7 +527,7 @@ overviewscroll.contentInset=
 	bottom: 40
 
 metricSLACard = new Layer
-	width: 512
+	width: 256*2
 	height: 192
 	superLayer: overviewscroll.content
 	x: 0
@@ -825,8 +882,12 @@ inboundServicesRef = firebase.get "/inboundservices",(services) ->
 			idnumber: service.id
 			sla: sla
 			longestcall: service.longestcall
+			abandonrate: service.abandonrate
+			livecalls: service.livecalls
+			avgcall: service.avgcall
 		ser.x = 0
-		ser.y = (240)*(service.id-1)
+		ser.y = (ser.height)*(service.id-1)
+		#ser.y = (384)*(service.id-1)		
 	
 outboundServicesRef = firebase.get "/outboundservices",(services) ->
 	servicesArray =  _.toArray(services) 
@@ -839,7 +900,7 @@ outboundServicesRef = firebase.get "/outboundservices",(services) ->
 			sla: sla
 			longestcall: service.longestcall
 		ser.x = 0
-		ser.y = (sketch.servicesContainerOutbound.height)*(service.id-1)
+		ser.y = (240)*(service.id-1)
 		
 
 # To load more options on screen - add service, add agent, screenshot
