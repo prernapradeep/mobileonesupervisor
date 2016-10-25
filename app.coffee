@@ -442,7 +442,7 @@ class OutboundService extends Layer
 						ag.x = 0
 						ag.y = (ag.height)*(agent.id-1)
 
-#class for Overview metrics section
+#Overview metrics section
 overviewscroll = new ScrollComponent
 	width: 512	
 	height: Screen.height
@@ -451,54 +451,336 @@ overviewscroll = new ScrollComponent
 	
 overviewscroll.contentInset=
 	bottom: 40
+
+metricSLACard = new Layer
+	width: 512
+	height: 192
+	superLayer: overviewscroll.content
+	x: 0
+	y: 0
+	backgroundColor: "transparent"
+	borderWidth: 1
+	borderColor: "rgba(128,128,128,1)"
 	
-#Class for the Overview metrics
-class OverviewMetrics extends Layer
-	idnumber = " "
+metricSLAImage = new Layer
+	superLayer: metricSLACard
+	width: 288
+	height: 96
+	image: "images/sampleGraph.png"
+	x: 200
+	y: 50
+	backgroundColor: "transparent"
 	
-	constructor: (opts)->
-		super opts
+metricSLALabel = new Layer
+	superLayer: metricSLACard
+	width: 150
+	height: 34
+	style: label
+	html: "SLA"
+	x: 32
+	y: 100
+	backgroundColor: "transparent"
 		
-		@width = 512
-		@height  = 192
-		@superLayer = overviewscroll.content
-		@x=0
-		@y=0
-		@idnumber = opts.idnumber
-		@borderWidth = 1
-		@borderColor = "rgba(128,128,128,1)"
-		@style = {
-			backgroundColor: "#FFF"
-		}
+metricSLAval = 92
+metricSLAValue = new Layer
+	superLayer: metricSLACard
+	width: 150
+	height: 86
+	style: val
+	html: metricSLAval + "%"
+	x: 32
+	y: 42
+	backgroundColor: "transparent"
+
+metricSLAtimer = Utils.interval Utils.randomNumber(1,10), -> 
+	if metricSLAval > Utils.randomNumber(80,90)
+		metricSLAval = metricSLAval + 1
+		metricSLAValue.html = "#{metricSLAval}" + "%"
+	if metricSLAval == 98
+		clearInterval metricSLAtimer
+
+metricAbandonRateCard = new Layer
+	width: 512
+	height: 192
+	superLayer: overviewscroll.content
+	x: 0
+	y: 0 + 192*1
+	backgroundColor: "transparent"
+	borderWidth: 1
+	borderColor: "rgba(128,128,128,1)"
 		
-		metricValue= new Layer
-			superLayer: this
-			width: 152
-			height: 78
-			y: 42
-			html: opts.metricValue
-			style: val
-			x: 32
-			backgroundColor: "transparent"
+metricAbandonRateImage = new Layer
+	superLayer: metricAbandonRateCard
+	width: 288
+	height: 96
+	image: "images/sampleGraph.png"
+	x: 200
+	y: 50
+	backgroundColor: "transparent"
 		
-		metricLabel = new Layer
-			superLayer: this
-			width: 150
-			height: 28
-			style: label
-			html: opts.metricName
-			x: 32
-			y: 100
-			backgroundColor: "transparent"
-			
-		metricGraph = new Layer
-			superLayer: this
-			width: 288
-			height: 96
-			image: "images/sampleGraph.png"
-			x: 192
-			y: 48
-			
+metricAbandonRateLabel = new Layer
+	superLayer: metricAbandonRateCard
+	width: 150
+	height: 34
+	style: label
+	html: "ABANDON RATE"
+	x: 32
+	y: 100
+	backgroundColor: "transparent"	
+
+metricAbandonRateval = 3
+metricAbandonRateValue = new Layer
+	superLayer: metricAbandonRateCard
+	width: 150
+	height: 86
+	style: val
+	html: metricAbandonRateval + "%"
+	x: 32
+	y: 42
+	backgroundColor: "transparent"
+
+metricAbandonRatetimer = Utils.interval Utils.randomNumber(1,10), -> 
+	if metricAbandonRateval > Utils.randomNumber(2,8)
+		metricAbandonRateval = metricAbandonRateval - 1
+		metricAbandonRateValue.html = "#{metricAbandonRateval}" + "%"
+	if metricSLAval == 2
+		clearInterval metricAbandonRatetimer
+		
+metricCallsWaitingCard = new Layer
+	width: 512
+	height: 192
+	superLayer: overviewscroll.content
+	x: 0
+	y: 0 + 192*2
+	backgroundColor: "transparent"
+	borderWidth: 1
+	borderColor: "rgba(128,128,128,1)"
+	
+metricCallsWaitingImage = new Layer
+	superLayer: metricCallsWaitingCard
+	width: 288
+	height: 96
+	image: "images/sampleGraph.png"
+	x: 200
+	y: 50
+	backgroundColor: "transparent"
+	
+metricCallsWaitingLabel = new Layer
+	superLayer: metricCallsWaitingCard
+	width: 150
+	height: 28
+	style: label
+	html: "CALLS WAITING"
+	x: 32
+	y: 100 
+	backgroundColor: "transparent"
+	
+metricCallsWaitingval = 24
+metricCallsWaitingValue = new Layer
+	superLayer: metricCallsWaitingCard
+	width: 150
+	height: 86
+	style: val
+	html: metricCallsWaitingval
+	x: 32
+	y: 42
+	backgroundColor: "transparent"
+	
+metricCallsWaitingtimer = Utils.interval Utils.randomNumber(1,10), -> 
+	metricCallsWaitingval = metricCallsWaitingval + 1
+	metricCallsWaitingValue.html = metricCallsWaitingval
+	if metricCallsWaitingval == 27
+		clearInterval metricCallsWaitingtimer
+		
+metricLiveCallsCard = new Layer
+	width: 512
+	height: 192
+	superLayer: overviewscroll.content
+	x: 0
+	y: 0 + 192*3
+	backgroundColor: "transparent"
+	borderWidth: 1
+	borderColor: "rgba(128,128,128,1)"
+	
+metricLiveCallsImage = new Layer
+	superLayer: metricLiveCallsCard
+	width: 288
+	height: 96
+	image: "images/sampleGraph.png"
+	x: 200
+	y: 50
+	backgroundColor: "transparent"
+	
+metricLiveCallsLabel = new Layer
+	superLayer: metricLiveCallsCard
+	width: 150
+	height: 28
+	style: label
+	html: "LIVE CALLS"
+	x: 32
+	y: 100
+	backgroundColor: "transparent"
+	
+metricLiveCallsval = 23
+metricLiveCallsValue = new Layer
+	superLayer: metricLiveCallsCard
+	width: 150
+	height: 86
+	style: val
+	html: metricLiveCallsval
+	x: 32
+	y: 42
+	backgroundColor: "transparent"
+
+metricLiveCallstimer = Utils.interval Utils.randomNumber(1,10), -> 
+	metricLiveCallsval = metricLiveCallsval + 1
+	metricLiveCallsValue.html = metricLiveCallsval
+	if metricLiveCallsval == 27
+		clearInterval metricLiveCallstimer
+		
+metricAgentActiveCard = new Layer
+	width: 512
+	height: 192
+	superLayer: overviewscroll.content
+	x: 0
+	y: 0 + 192*4
+	backgroundColor: "transparent"
+	borderWidth: 1
+	borderColor: "rgba(128,128,128,1)"
+	
+metricAgentActiveImage = new Layer
+	superLayer: metricAgentActiveCard
+	width: 288
+	height: 96
+	image: "images/sampleGraph.png"
+	x: 200
+	y: 50
+	backgroundColor: "transparent"
+	
+metricAgentActiveLabel = new Layer
+	superLayer: metricAgentActiveCard
+	width: 150
+	height: 28
+	style: label
+	html: "AGENTS ACTIVE"
+	x: 32
+	y: 100
+	backgroundColor: "transparent"
+	
+metricAgentActiveval = 32
+metricAgentActiveValue = new Layer
+	superLayer: metricAgentActiveCard
+	width: 150
+	height: 86
+	style: val
+	html: metricAgentActiveval
+	x: 32
+	y: 42 
+	backgroundColor: "transparent"
+
+metricAgentActivetimer = Utils.interval Utils.randomNumber(1,10), -> 
+	metricAgentActiveval = metricAgentActiveval - 1
+	metricAgentActiveValue.html = metricAgentActiveval
+	if metricAgentActiveval == 30
+		clearInterval metricAgentActivetimer
+		
+metricWaitTimeCard = new Layer
+	width: 512
+	height: 192
+	superLayer: overviewscroll.content
+	x: 0
+	y: 0 + 192*5
+	backgroundColor: "transparent"
+	borderWidth: 1
+	borderColor: "rgba(128,128,128,1)"
+
+metricWaitTimeImage = new Layer
+	superLayer: metricWaitTimeCard
+	width: 288
+	height: 96
+	image: "images/sampleGraph.png"
+	x: 200
+	y: 50
+	backgroundColor: "transparent"
+	
+metricWaitTimeLabel = new Layer
+	superLayer: metricWaitTimeCard
+	width: 150
+	height: 28
+	style: label
+	html: "AVG. WAIT TIME"
+	x: 32
+	y: 100
+	backgroundColor: "transparent"
+		
+metricWaitTimeval = 75
+min=0
+sec=0	
+min = Math.ceil(metricWaitTimeval/60)
+sec = metricWaitTimeval  % 60
+print min,sec
+
+metricWaitTimeValue = new Layer
+	superLayer: metricWaitTimeCard
+	width: 150
+	height: 86
+	style: val
+	html: min + ":" + sec
+	x: 32
+	y: 42
+	backgroundColor: "transparent"
+	
+metricCallTimeCard = new Layer
+	width: 512
+	height: 192
+	superLayer: overviewscroll.content
+	x: 0
+	y: 0 + 192*6
+	backgroundColor: "transparent"
+	borderWidth: 1
+	borderColor: "rgba(128,128,128,1)"
+	
+metricCallTimeImage = new Layer
+	superLayer: metricCallTimeCard
+	width: 288
+	height: 96
+	image: "images/sampleGraph.png"
+	x: 200
+	y: 50
+	backgroundColor: "transparent"
+	
+metricCallTimeLabel = new Layer
+	superLayer: metricCallTimeCard
+	width: 150
+	height: 28
+	style: label
+	html: "AVG. CALL TIME"
+	x: 32
+	y: 100
+	backgroundColor: "transparent"
+	
+metricCallTimeval = 234
+min=0
+sec=0	
+metricCallTimeval  = metricCallTimeval  + 1
+min = Math.ceil(metricCallTimeval /60)
+sec = metricCallTimeval  % 60
+if sec == 60
+	min = min + 1
+	sec = 0
+else
+	if Math.ceil(sec/10) == 0
+		sec = '0' + sec
+		
+metricCallTimeValue = new Layer
+	superLayer: metricCallTimeCard
+	width: 150
+	height: 86
+	style: val
+	html: metricCallTimeval
+	x: 32
+	y: 42
+	backgroundColor: "transparent"
 		
 sketch.homeicon.backgroundColor = "#ffffff"
 
@@ -1527,8 +1809,8 @@ sketch.agentActionServices.on Events.Click, ->
 sketch.agentActionMessages.on Events.Click, ->
 	sketch.chat_icon.backgroundColor = "#fff"
 	for sibling in sketch.chat_icon.siblings
-		sibling.backgroundColor = "transparent"
-		#sibling.backgroundColor = "#FFF"
+		#sibling.backgroundColor = "transparent"
+		sibling.backgroundColor = "#FFF"
 		showViewContent(sketch.message,"up")
 		hideViewContent(sketch.homeContent)
 		hideViewContent(sketch.notificationContent)
