@@ -1549,8 +1549,8 @@ sketch.agentActionServices.on Events.Click, ->
 sketch.agentActionMessages.on Events.Click, ->
 	sketch.chat_icon.backgroundColor = "#fff"
 	for sibling in sketch.chat_icon.siblings
-		#sibling.backgroundColor = "transparent"
-		sibling.backgroundColor = "#FFF"
+		sibling.backgroundColor = "transparent"
+		#sibling.backgroundColor = "#FFF"
 		showViewContent(sketch.message,"up")
 		hideViewContent(sketch.homeContent)
 		hideViewContent(sketch.notificationContent)
