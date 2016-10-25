@@ -1,3 +1,4 @@
+
 # Import file "MobileV1_fixed_copy_Prerna-1" (sizes and positions are scaled 1:2)
 sketch = Framer.Importer.load("imported/MobileV1_fixed_copy_Prerna-1@2x")
 
@@ -1722,33 +1723,45 @@ class Agent extends Layer
 				if totalcurrentcall > 1000
 					clearInterval (currentCalltimer)
 
-		dropdown1 = new Layer
+		possibleActions = new Layer
 			superLayer: this
-			x: 730
-			y: -1498
-			width: 616
-			image: "images/Shape.png"
+			x: 0
+			y: 192
+			width: 672
+			height: 192
+			image: "images/agentAction.png"
 			backgroundColor: "transparent"
 			opacity: 0
-			height: 538
 			
-		dropdown2 = new Layer
-			superLayer: this
-			y: 364
-			x: 2
-			width: 614
-			height: 404
-			opacity:0 
 			
-		fist = new Layer
-			superLayer: sketch.agentAction
-			width: 52
-			height: 48
-			image: "images/fist.png"
-			x: 60
-			y: 75
+		actionDisplay = new Layer
+			superLayer: possibleActions
+			y: 192
+			x: 0
+			width: 672
+			height: 384
+			opacity: 0 
+			image: "images/agentActionDropdownServices.png"
 			
-		ProgressBar_pause.states.add
+		agentClick = 0
+		@on Events.Click, () ->
+			if agentClick == 0 
+				possibleActions.opacity = 1
+				actionDisplay.opacity = 1
+				agentClick = 1
+				for sibling in this.siblings
+					if sibling.index > this.index
+						sibling.y = sibling.y + 576
+			else
+				for sibling in this.siblings
+					if sibling.index > this.index
+						sibling.y = sibling.y - 576
+				possibleActions.opacity = 0
+				actionDisplay.opacity = 0
+				agentClick = 0
+					
+
+		###ProgressBar_pause.states.add
 			agentInfoOn:
 				#ProgressBar_pause.placeBefore(this)
 				opacity: 1
@@ -1761,108 +1774,7 @@ class Agent extends Layer
 			ProgressBar_pause.states.switch "agentInfoOn"
 	
 		listenIn_click.on Events.Click, ->
-			ProgressBar_pause.states.switch "agentInfoOff"
-			
-		#accordion for agents
-		width  = this.width
-		height = this.height 
-		expandedHeight = 800
-
-		open = false
-		@on Events.Click, ->
-			print this.superLayer.id
-			if this.superLayer.id == 5
-				index = this.index
-				print index
-				len = sketch.agentContent.children
-				print len
-				if open == false
-					@.animate 
-						properties:
-							height: expandedHeight
-						curve: "spring(100,15,0)"
-					if index != len.length
-						for i in [index .. len.length-1]
-							#agentActiony = len[i].y + 200
-							len[i].animate
-								properties:
-									y: len[i].y + 609
-								curve: "spring(100,15,0)"
-						###dropdown1.animate	
-							properties:
-								opacity: 1###
-					
-						sketch.agentAction.animate	
-							properties:
-								opacity: 1
-								y: this.maxY + 200
-							curve: "spring(this.maxY,this.maxX,0)"
-							#time: 2
-						sketch.agentActionDropdownServices.animate
-							properties:
-								opacity: 1
-								y: this.maxY + 400
-							curve: "spring(this.maxY, this.maxX,0)"
-							#time: 2
-							#agentActiony = len[i].y + 200
-							#agentActiony = len[i].y + 200
-							#sketch.agentAction.y = agentActiony
-					if index == len.length
-						sketch.agentAction.animate	
-							properties:
-								opacity: 1
-								y: this.maxY + 200
-							curve: "spring(this.maxY,this.maxX,0)"
-							#time: 2
-						sketch.agentActionDropdownServices.animate
-							properties:
-								opacity: 1
-								y: this.maxY + 400
-							curve: "spring(this.maxY, this.maxX,0)"
-					
-					open = true
-				else 
-					@.animate 
-						properties:
-							height: height
-						curve: "spring(100,15,0)"
-					origi = 0	
-					if index != len.length
-						for i in [index .. len.length-1]
-							origi = len[i]
-							len[i].animate
-								properties:
-									y: len[i].y - 609
-								curve: "spring(100,15,0)"
-						sketch.agentActionDropdownServices.animate
-							properties:
-								opacity: 0
-								y: sketch.agentActionDropdownServices.y - 200
-							curve: "spring(100,15,0)"
-						sketch.agentAction.animate	
-							properties:
-								opacity: 0
-								y: sketch.agentAction.y - 200
-						curve: "spring(100,15,0)"
-					if index == len.length
-						sketch.agentActionDropdownServices.animate
-							properties:
-								opacity: 0
-								y: sketch.agentActionDropdownServices.y - 200
-							curve: "spring(100,15,0)"
-						sketch.agentAction.animate	
-							properties:
-								opacity: 0
-								y: sketch.agentAction.y - 200
-						curve: "spring(100,15,0)"
-					open = false
-					
-			else if this.superLayer.id == 54
-				if this.toggle == 0
-					@activate()
-				else
-					@deactivate()
-				
+			ProgressBar_pause.states.switch "agentInfoOff"###
 
 agentNames = []
 agentsRef = firebase.get "/agents",(agents) ->
@@ -1879,45 +1791,4 @@ agentsRef = firebase.get "/agents",(agents) ->
 			#dropdown2: this.dropdown2
 		ag.x = 0
 		ag.y = (ag.height)*(agent.id-1)
-		
-sketch.agentActionListenInBorderON.visible = false
-
-sketch.agentActionListenInBorderOFF.on Events.Click, ->
-	sketch.agentActionListenInBorderON.visible = true
-	sketch.agentActionListenInBorderOFF.visible = false
-	
-sketch.agentActionListenInBorderON.on Events.Click, ->
-	sketch.agentActionListenInBorderOFF.visible = true
-	sketch.agentActionListenInBorderON.visible = false
-	
-sketch.agentActionDropdownInfo.superLayer = sketch.agentActionDropdownServices
-sketch.agentActionDropdownInfo.placeBefore(sketch.agentActionDropdownServices)
-sketch.agentActionDropdownInfo.x = 0
-sketch.agentActionDropdownInfo.y = 0
-
-sketch.agentActionDropdownInfo.states.add
-	agentInfoOn:
-		opacity: 1
-		visible: true
-	agentInfoOff:
-		opacity: 0
-		visible: false
-		
-sketch.agentActionInfo.on Events.Click, ->
-	sketch.agentActionDropdownInfo.states.switch "agentInfoOn"
-	
-sketch.agentActionServices.on Events.Click, ->
-	sketch.agentActionDropdownInfo.states.switch "agentInfoOff"
-	
-
-sketch.agentActionMessages.on Events.Click, ->
-	sketch.chat_icon.backgroundColor = "#fff"
-	for sibling in sketch.chat_icon.siblings
-		#sibling.backgroundColor = "transparent"
-		sibling.backgroundColor = "#FFF"
-		showViewContent(sketch.message,"up")
-		hideViewContent(sketch.homeContent)
-		hideViewContent(sketch.notificationContent)
-		hideMenuOptions()
-
 
