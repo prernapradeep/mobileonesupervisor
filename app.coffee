@@ -19,20 +19,11 @@ firebase = new Firebase
 	secret: "3DN06qUHzHwAij8nSWcVJ3Tk1MWY9J2rauEDmqIc" 
 
 header = {
-	paddingTop: "25px",
+	paddingTop: "5px",
 	color: "#000",
 	fontFamily: "Lato"
-	fontSize: "45px"
+	fontSize: "48px"
 	fontWeight: "500"
-	textAlign : "left"
-};
-
-val = {
-	paddingTop: "15px",
-	color: "#000",
-	fontFamily: "Lato"
-	fontSize: "70px"
-	fontWeight: "900"
 	textAlign : "left"
 };
 
@@ -46,18 +37,18 @@ statusLabel = {
 };
 
 val = {
-	paddingTop: "15px",
+	paddingTop: "20px",
 	color: "#000",
 	fontFamily: "Lato"
-	fontSize: "70px"
+	fontSize: "72px"
 	fontWeight: "900"
 	textAlign : "left"
 }
 label = {
 	paddingTop: "15px",
-	color: "#000",
+	color: "#757473",
 	fontFamily: "Lato"
-	fontSize: "30px"
+	fontSize: "28px"
 	fontWeight: "400"
 	textAlign : "left"
 };
@@ -101,8 +92,8 @@ class InboundService extends Layer
 		super opts
 	
 		@superLayer = inboundscroll.content
-		@width = 725
-		@height = 384
+		@width = 704
+		@height = 240
 		@idnumber = opts.idnumber
 		@name = opts.name
 		@sla = opts.sla
@@ -114,25 +105,34 @@ class InboundService extends Layer
 			backgroundColor: "#FFF"
 		}
 		
+		sampleGraph = new Layer
+			superLayer: this
+			width: 358
+			height: 120
+			x: 262
+			y: 82
+			image: "images/sampleGraph.png"
+			backgroundColor: "transparent"
+
 		
 		serviceNameField = new Layer
 			superLayer: this
-			width: 500
-			height: 110
-			y: 20
+			width: 750
+			height: 60
+			y: 28
 			html: opts.name
 			style: header
-			x: 75
+			x: 32
 			backgroundColor: "transparent"
 	
 		slaValue= new Layer
 			superLayer: this
 			width: 152
-			height: 78
-			y: 120
+			height: 86
+			y: 100
 			html: opts.sla + "%"
 			style: val
-			x: 75
+			x: 32
 			backgroundColor: "transparent"
 						
 		sla = this.sla
@@ -151,8 +151,8 @@ class InboundService extends Layer
 			height: 28
 			style: label
 			html: "SLA"
-			x: 75
-			y: 180
+			x: 32
+			y: 165
 			backgroundColor: "transparent"
 		
 		min = Math.ceil(opts.longestcall/60)
@@ -160,7 +160,7 @@ class InboundService extends Layer
 		if (sec/10) == 0
 			sec = '0'+sec
 
-		longestCallVal = new Layer
+		###longestCallVal = new Layer
 			superLayer: this
 			width: 152
 			height: 78
@@ -183,10 +183,10 @@ class InboundService extends Layer
 			longestCallVal.html =  min + ":" + sec
 			
 			if totalcall > 1000
-				clearInterval (longestCalltimer)
+				clearInterval (longestCalltimer)###
 
 
-		longestCallLabel = new Layer
+		###longestCallLabel = new Layer
 			superLayer: this
 			width: 300
 			height: 28
@@ -194,18 +194,18 @@ class InboundService extends Layer
 			html: "LONGEST CALL"
 			x: 375
 			y: 180
-			backgroundColor: "transparent"
+			backgroundColor: "transparent"###
 			
-		ProgressBar = new Layer 
+		###ProgressBar = new Layer 
 			superLayer: this
 			width:550
 			height:60
 			originX:0
 			backgroundColor:'#B2B0B0'
 			x: 75
-			y: 250
+			y: 250###
 		
-		agentStatusLabel = new Layer
+		###agentStatusLabel = new Layer
 			superLayer: this
 			width: 500
 			height: 28
@@ -213,29 +213,7 @@ class InboundService extends Layer
 			html: "AGENT STATUS"
 			x: 75
 			y: 310
-			backgroundColor: "transparent"
-		
-		notificationLabel = new Layer
-			superLayer: this
-			width: 300
-			height: 50
-			x: 375
-			y: 30
-			borderRadius: 40
-			backgroundColor: "red"
-			color: "#fff"
-			visible: false
-			
-		notificationText = new Layer
-			superLayer: notificationLabel
-			width: 300
-			height: 50
-			x: 20
-			y: 10
-			borderRadius: 40
-			backgroundColor: "transparent"
-			color: "#fff"
-			html: "5 calls waiting"
+			backgroundColor: "transparent"###
 			
 		@on Events.Click, () ->
 			##if this layer has been clicked, change toggle to 1
@@ -304,8 +282,8 @@ class OutboundService extends Layer
 		super opts
 	
 		@superLayer = outboundscroll.content
-		@width = 725
-		@height = 384
+		@width = 672
+		@height = 240
 		@idnumber = opts.idnumber
 		@name = opts.name
 		@sla = opts.sla
@@ -466,7 +444,7 @@ class OutboundService extends Layer
 
 #class for Overview metrics section
 overviewscroll = new ScrollComponent
-	width: 512
+	width: 512	
 	height: Screen.height
 	scrollHorizontal: false
 	parent: sketch.overviewContent
@@ -525,7 +503,7 @@ class OverviewMetrics extends Layer
 sketch.homeicon.backgroundColor = "#ffffff"
 
 inboundscroll = new ScrollComponent
-	width: 730
+	width: 672
 	height: Screen.height
 	scrollHorizontal: false
 	parent: sketch.servicesContainerInbound
@@ -534,7 +512,7 @@ inboundscroll.contentInset=
 	bottom: 240
 	
 outboundscroll = new ScrollComponent
-	width: 730
+	width: 672
 	height: Screen.height
 	scrollHorizontal: false
 	parent: sketch.servicesContainerOutbound
@@ -550,7 +528,7 @@ inboundServicesRef = firebase.get "/inboundservices",(services) ->
 			sla: sla
 			longestcall: service.longestcall
 		ser.x = 0
-		ser.y = (sketch.servicesContainerInbound.height)*(service.id-1)
+		ser.y = (240)*(service.id-1)
 	
 outboundServicesRef = firebase.get "/outboundservices",(services) ->
 	servicesArray =  _.toArray(services) 
@@ -893,7 +871,7 @@ serviceToggle = new Layer
 	height:50
 	borderRadius: 30
 	backgroundColor:"#b5b5b5"
-	x: 573
+	x: 520	
 	y: 78
 	index: 2
 	
@@ -969,9 +947,9 @@ alert_animation = ->
 	
 Utils.delay(5,alert_animation)
 
-notificationLabel = new Layer
+###notificationLabel = new Layer
 	superLayer: sketch.homeContent
-	width: 300
+	width: 225
 	height: 50
 	x: 890
 	y: 230
@@ -984,7 +962,7 @@ notificationText = new Layer
 	superLayer: notificationLabel
 	width: 300
 	height: 50
-	x: 20
+	x: 25
 	y: 10
 	borderRadius: 40
 	backgroundColor: "transparent"
@@ -993,7 +971,7 @@ notificationText = new Layer
 
 alertLabel_animation = ->
 	notificationLabel.visible = true
-Utils.delay(3, alertLabel_animation)
+Utils.delay(3, alertLabel_animation)###
 
 showViewContent = (content, direction) ->
 	content.visible = true
@@ -1274,8 +1252,8 @@ class Agent extends Layer
 	constructor: (opts)->
 		super opts
 		
-		@width=615
-		@height=191
+		@width= 672
+		@height=192
 		@x = 1110
 		@superLayer = opts.parent
 		@style = label
