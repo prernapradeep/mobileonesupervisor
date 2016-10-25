@@ -1,3 +1,4 @@
+
 # Import file "MobileV1_fixed_copy_Prerna-1" (sizes and positions are scaled 1:2)
 sketch = Framer.Importer.load("imported/MobileV1_fixed_copy_Prerna-1@2x")
 
@@ -145,7 +146,12 @@ class InboundService extends Layer
 			style: header
 			x: 32
 			backgroundColor: "transparent"
-	
+
+		if opts.sla < 80 
+			val.color = "red"
+		else 
+			val.color = "black"
+			
 		slaValue= new Layer
 			superLayer: this
 			width: 152
@@ -162,6 +168,19 @@ class InboundService extends Layer
 			if sla > Utils.randomNumber(80,90)
 				sla = sla + 1
 				slaValue.html = "#{sla}" + "%"
+			else
+				sla = sla - 1 
+				slaValue.html = "#{sla}" + "%"
+				
+			if sla < 80 
+				slaValue.color = "red"
+			else 
+				slaValue.color = "black"
+				
+			if sla <= 67
+				sla = sla + 1
+				slaValue.html = "#{sla}" + "%"
+			
 			if sla == 100
 				clearInterval timer
 
@@ -774,7 +793,6 @@ min=0
 sec=0	
 min = Math.ceil(metricWaitTimeval/60)
 sec = metricWaitTimeval  % 60
-#print min,sec
 
 metricWaitTimeValue = new Layer
 	superLayer: metricWaitTimeCard
@@ -887,6 +905,7 @@ outboundServicesRef = firebase.get "/outboundservices",(services) ->
 		
 
 # To load more options on screen - add service, add agent, screenshot
+###
 sketch.home_more.superLayer = null
 screenshotButton = sketch.Circle0
 
@@ -1171,7 +1190,8 @@ screenshotButton.on Events.Click, ->
 		notificationScreenshotSent.opacity = 1
 	notificationScreenshotSent_ok.on Events.Click, ->
 		notificationScreenshotSent.opacity = 0
-	
+###
+
 # To toggle between inbound and outbound services
 showContent = (content, direction) ->
 	content.visible = true
@@ -1556,6 +1576,7 @@ notifRef = firebase.get "/notifications",(notifs) ->
 		ser.x = 0
 		ser.y = (200)*(notif.id-1)
 
+###
 agentFlag = 0
 agentsRef = firebase.get "/notifagents",(agents) ->
 	agentsArray = _.toArray(agents)
@@ -1570,13 +1591,10 @@ agentsRef = firebase.get "/notifagents",(agents) ->
 		ag.width = 700
 		ag.x = 0
 		ag.y = (ag.height)*(agent.id-1)
+###
 
 # Everything related to the Agents
-
 class Agent extends Layer
-
-
-	
 	sketch.agentAction.opacity = 0
 	sketch.agentActionDropdownServices.opacity = 0
 	sketch.phone_in_talk.opacity = 0
@@ -1597,7 +1615,7 @@ class Agent extends Layer
 		@width= 672
 		@height=192
 		@x = 1110
-		@superLayer = opts.parent
+		@superLayer = sketch.agentContent
 		@style = label
 		@borderWidth = 1
 		@borderColor = "rgba(128,128,128,1)"
@@ -1616,9 +1634,14 @@ class Agent extends Layer
 	
 		min = Math.ceil(opts.currentcall/60)
 		sec = Math.ceil(opts.currentcall % 60)
-		if (sec/10) == 0
+		if Math.floor(sec/10) == 0
 			sec = '0'+sec
-
+			
+		if min > 8
+			agentval.color = "red"
+		else 
+			agentval.color = "black"
+			
 		longestCallVal = new Layer
 			superLayer: this
 			width: 152
@@ -1628,7 +1651,7 @@ class Agent extends Layer
 			style: agentval
 			x: 407
 			backgroundColor: "transparent"
-			
+		
 		ProgressBar = new Layer 
 			superLayer: this
 			width: 400
@@ -1679,26 +1702,68 @@ class Agent extends Layer
 			width: 185
 			height: 45
 			backgroundColor: "transparent"
-			
-		dropdown1 = new Layer
+
+		totalcurrentcall = opts.currentcall
+		if status.html == "busy"
+			currentCalltimer = Utils.interval 1, -> 
+				totalcurrentcall = totalcurrentcall + 1
+				min = Math.floor(totalcurrentcall/60)
+				sec = totalcurrentcall % 60
+				if sec == 60
+					min = min + 1
+					sec = 0
+				else
+					if Math.floor(sec/10) == 0
+						sec = '0' + sec
+				if min > 8
+					longestCallVal.color = "red"
+					
+				longestCallVal.html =  min + ":" + sec
+				
+				if totalcurrentcall > 1000
+					clearInterval (currentCalltimer)
+
+		possibleActions = new Layer
 			superLayer: this
-			x: 730
-			y: -1498
-			width: 616
-			image: "images/Shape.png"
+			x: 0
+			y: 192
+			width: 672
+			height: 192
+			image: "images/agentAction.png"
 			backgroundColor: "transparent"
 			opacity: 0
-			height: 538
 			
-		dropdown2 = new Layer
-			superLayer: this
-			y: 364
-			x: 2
-			width: 614
-			height: 404
-			opacity:0 
 			
-		fist = new Layer
+		actionDisplay = new Layer
+			superLayer: possibleActions
+			y: 192
+			x: 0
+			width: 672
+			height: 384
+			opacity: 0 
+			image: "images/agentActionDropdownServices.png"
+			
+		agentClick = 0
+		@on Events.Click, () ->
+			if agentClick == 0 
+				possibleActions.opacity = 1
+				actionDisplay.opacity = 1
+				agentClick = 1
+				for sibling in this.siblings
+					if sibling.index > this.index
+						sibling.y = sibling.y + 576
+			else
+				for sibling in this.siblings
+					if sibling.index > this.index
+						sibling.y = sibling.y - 576
+				possibleActions.opacity = 0
+				actionDisplay.opacity = 0
+				agentClick = 0
+					
+					
+
+			
+###fist = new Layer
 			superLayer: sketch.agentAction
 			width: 52
 			height: 48
@@ -1720,105 +1785,8 @@ class Agent extends Layer
 	
 		listenIn_click.on Events.Click, ->
 			ProgressBar_pause.states.switch "agentInfoOff"
-			
-		#accordion for agents
-		width  = this.width
-		height = this.height 
-		expandedHeight = 800
+###
 
-
-		open = false
-		@on Events.Click, ->
-			if this.superLayer.id == 5
-				index = this.index
-				len = sketch.agentContent.children
-				if open == false
-					@.animate 
-						properties:
-							height: expandedHeight
-						curve: "spring(100,15,0)"
-					if index != len.length
-						for i in [index .. len.length-1]
-							#agentActiony = len[i].y + 200
-							len[i].animate
-								properties:
-									y: len[i].y + 609
-								curve: "spring(100,15,0)"
-						###dropdown1.animate	
-							properties:
-								opacity: 1###
-					
-						sketch.agentAction.animate	
-							properties:
-								opacity: 1
-								y: this.maxY + 200
-							curve: "spring(this.maxY,this.maxX,0)"
-							#time: 2
-						sketch.agentActionDropdownServices.animate
-							properties:
-								opacity: 1
-								y: this.maxY + 400
-							curve: "spring(this.maxY, this.maxX,0)"
-							#time: 2
-							#agentActiony = len[i].y + 200
-							#agentActiony = len[i].y + 200
-							#sketch.agentAction.y = agentActiony
-					if index == len.length
-						sketch.agentAction.animate	
-							properties:
-								opacity: 1
-								y: this.maxY + 200
-							curve: "spring(this.maxY,this.maxX,0)"
-							#time: 2
-						sketch.agentActionDropdownServices.animate
-							properties:
-								opacity: 1
-								y: this.maxY + 400
-							curve: "spring(this.maxY, this.maxX,0)"
-					
-					open = true
-				else 
-					@.animate 
-						properties:
-							height: height
-						curve: "spring(100,15,0)"
-					origi = 0	
-					if index != len.length
-						for i in [index .. len.length-1]
-							origi = len[i]
-							len[i].animate
-								properties:
-									y: len[i].y - 609
-								curve: "spring(100,15,0)"
-						sketch.agentActionDropdownServices.animate
-							properties:
-								opacity: 0
-								y: sketch.agentActionDropdownServices.y - 200
-							curve: "spring(100,15,0)"
-						sketch.agentAction.animate	
-							properties:
-								opacity: 0
-								y: sketch.agentAction.y - 200
-						curve: "spring(100,15,0)"
-					if index == len.length
-						sketch.agentActionDropdownServices.animate
-							properties:
-								opacity: 0
-								y: sketch.agentActionDropdownServices.y - 200
-							curve: "spring(100,15,0)"
-						sketch.agentAction.animate	
-							properties:
-								opacity: 0
-								y: sketch.agentAction.y - 200
-						curve: "spring(100,15,0)"
-					open = false
-			else if this.superLayer.id == 54
-				print this.toggle
-				if this.toggle == 0
-					@activate()
-				else
-					@deactivate()
-				
 
 agentNames = []
 agentsRef = firebase.get "/agents",(agents) ->
@@ -1835,45 +1803,4 @@ agentsRef = firebase.get "/agents",(agents) ->
 			#dropdown2: this.dropdown2
 		ag.x = 0
 		ag.y = (ag.height)*(agent.id-1)
-		
-sketch.agentActionListenInBorderON.visible = false
-
-sketch.agentActionListenInBorderOFF.on Events.Click, ->
-	sketch.agentActionListenInBorderON.visible = true
-	sketch.agentActionListenInBorderOFF.visible = false
-	
-sketch.agentActionListenInBorderON.on Events.Click, ->
-	sketch.agentActionListenInBorderOFF.visible = true
-	sketch.agentActionListenInBorderON.visible = false
-	
-sketch.agentActionDropdownInfo.superLayer = sketch.agentActionDropdownServices
-sketch.agentActionDropdownInfo.placeBefore(sketch.agentActionDropdownServices)
-sketch.agentActionDropdownInfo.x = 0
-sketch.agentActionDropdownInfo.y = 0
-
-sketch.agentActionDropdownInfo.states.add
-	agentInfoOn:
-		opacity: 1
-		visible: true
-	agentInfoOff:
-		opacity: 0
-		visible: false
-		
-sketch.agentActionInfo.on Events.Click, ->
-	sketch.agentActionDropdownInfo.states.switch "agentInfoOn"
-	
-sketch.agentActionServices.on Events.Click, ->
-	sketch.agentActionDropdownInfo.states.switch "agentInfoOff"
-	
-
-sketch.agentActionMessages.on Events.Click, ->
-	sketch.chat_icon.backgroundColor = "#fff"
-	for sibling in sketch.chat_icon.siblings
-		#sibling.backgroundColor = "transparent"
-		sibling.backgroundColor = "#FFF"
-		showViewContent(sketch.message,"up")
-		hideViewContent(sketch.homeContent)
-		hideViewContent(sketch.notificationContent)
-		hideMenuOptions()
-
 
