@@ -1760,18 +1760,8 @@ class Agent extends Layer
 				actionDisplay.opacity = 0
 				agentClick = 0
 					
-					
 
-			
-###fist = new Layer
-			superLayer: sketch.agentAction
-			width: 52
-			height: 48
-			image: "images/fist.png"
-			x: 60
-			y: 75
-			
-		ProgressBar_pause.states.add
+		###ProgressBar_pause.states.add
 			agentInfoOn:
 				#ProgressBar_pause.placeBefore(this)
 				opacity: 1
@@ -1784,9 +1774,7 @@ class Agent extends Layer
 			ProgressBar_pause.states.switch "agentInfoOn"
 	
 		listenIn_click.on Events.Click, ->
-			ProgressBar_pause.states.switch "agentInfoOff"
-###
-
+			ProgressBar_pause.states.switch "agentInfoOff"###
 
 agentNames = []
 agentsRef = firebase.get "/agents",(agents) ->
