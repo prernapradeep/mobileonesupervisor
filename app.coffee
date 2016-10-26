@@ -1743,12 +1743,72 @@ class Agent extends Layer
 			opacity: 0 
 			image: "images/agentActionDropdownServices.png"
 			
+		agentAction_listenON = new Layer
+			superLayer: possibleActions
+			y: 0
+			x: 0
+			width: 672
+			height: 192
+			opacity: 0
+			backgroundColor: "transparent"
+			image: "images/agentAction_listenON.png"
+		
+		ProgressBar_pause.states.add
+			agentInfoOn:
+				opacity: 1
+				visible: true
+			agentInfoOff:
+				opacity: 0
+				visible: false	
+				
+		agentAction_listenON.states.add
+			agentInfoOn:
+				opacity: 1
+				visible: true
+			agentInfoOff:
+				opacity: 0
+				visible: false
+			
+		listenIn_click.on Events.Click, ->
+			ProgressBar_pause.states.switch "agentInfoOn"
+	
+		listenIn_click.on Events.Click, ->
+			ProgressBar_pause.states.switch "agentInfoOff"
+		
+		possibleActionsSub = new Layer
+			x: 1380
+			y: 425
+			width: 192
+			height: 192
+			backgroundColor: "transparent"
+			visible: false
+			
+		messages = new Layer
+			x: 1500
+			y: 425
+			width: 160
+			height: 150
+			backgroundColor: "transparent"
+			visible: false
+		
+		takeOver = new Layer
+			superLayer: possibleActions
+			width: 100
+			height: 125
+			x: 50
+			y: 20
+			backgroundColor: "transparent"
+		takeOver.placeBefore(possibleActions)
+		
 		agentClick = 0
 		@on Events.Click, () ->
+			print "hi"
 			if agentClick == 0 
 				possibleActions.opacity = 1
 				actionDisplay.opacity = 1
 				agentClick = 1
+				possibleActionsSub.visible = true
+				messages.visible = true
 				for sibling in this.siblings
 					if sibling.index > this.index
 						sibling.y = sibling.y + 576
@@ -1759,22 +1819,22 @@ class Agent extends Layer
 				possibleActions.opacity = 0
 				actionDisplay.opacity = 0
 				agentClick = 0
-					
-
-		###ProgressBar_pause.states.add
-			agentInfoOn:
-				#ProgressBar_pause.placeBefore(this)
-				opacity: 1
-				visible: true
-			agentInfoOff:
-				opacity: 0
-				visible: false	
 			
-		listenIn_click.on Events.Click, ->
-			ProgressBar_pause.states.switch "agentInfoOn"
-	
-		listenIn_click.on Events.Click, ->
-			ProgressBar_pause.states.switch "agentInfoOff"###
+		possibleActionsSub.on Events.Click, ->
+			print "hello"
+			#agentClick = 0
+			agentAction_listenON.opacity = 1	
+
+			#sibling.y = sibling.y - 576
+		messages.on Events.Click, ->
+			sketch.chat_icon.backgroundColor = "#fff"
+			for sibling in sketch.chat_icon.siblings
+			    #sibling.backgroundColor = "transparent"
+				sibling.backgroundColor = "#FFF"
+				showViewContent(sketch.message,"up")
+				hideViewContent(sketch.homeContent)
+				hideViewContent(sketch.notificationContent)
+				hideMenuOptions()
 
 agentNames = []
 agentsRef = firebase.get "/agents",(agents) ->
@@ -1792,3 +1852,5 @@ agentsRef = firebase.get "/agents",(agents) ->
 		ag.x = 0
 		ag.y = (ag.height)*(agent.id-1)
 
+
+			
