@@ -9,7 +9,7 @@ sketch = Framer.Importer.load("imported/MobileV1_fixed_copy_Prerna-1@2x")
 Framer.Info =
 	title: ""
 	author: "Prerna Pradeep"
-	twitter: ""
+	twitter: ""	
 	description: ""
 
 # Set up Firebase
@@ -1274,7 +1274,8 @@ serviceToggle.on Events.Click, ->
 		serviceToggleInitial = 1
 		hideContent(sketch.servicesContainerOutbound)
 		showContent(sketch.servicesContainerInbound, "left")
-	
+
+###
 notification_alert = new Layer
 	superLayer: sketch.notification_icon
 	width: 60
@@ -1294,8 +1295,9 @@ notification_count = new Layer
 	y: 14
 	x: 3
 	backgroundColor: "transparent"
-	
+###
 # for the alert notification to come in
+###
 alert_animation = ->
 	notification_alert.visible = true
 	notification_animation = new Animation
@@ -1308,7 +1310,7 @@ alert_animation = ->
 	notification_animation.start()
 	
 Utils.delay(5,alert_animation)
-
+###
 ###notificationLabel = new Layer
 	superLayer: sketch.homeContent
 	width: 225
@@ -1366,7 +1368,7 @@ showMenuOptions = ->
 	sketch.Circle2.visible = true
 	sketch.Circle1.visible = true
 	
-sketch.notification_icon.on Events.Click, ->
+###sketch.notification_icon.on Events.Click, ->
 	sketch.notification_icon.backgroundColor = "#fff"
 	for sibling in sketch.notification_icon.siblings
 		sibling.backgroundColor = "transparent"
@@ -1375,6 +1377,7 @@ sketch.notification_icon.on Events.Click, ->
 	hideViewContent(sketch.homeContent)
 	notification_alert.visible = false
 	hideMenuOptions()
+	###
 	
 sketch.homeicon.on Events.Click, ->
 	sketch.homeicon.backgroundColor = "#fff"
