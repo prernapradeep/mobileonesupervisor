@@ -1,6 +1,6 @@
-
 # Import file "MobileV1_fixed_copy_Prerna-1" (sizes and positions are scaled 1:2)
 sketch = Framer.Importer.load("imported/MobileV1_fixed_copy_Prerna-1@2x")
+
 
 # Project Info
 # This info is presented in a widget when you share.
@@ -311,7 +311,7 @@ class InboundService extends Layer
 						sibling.y = sibling.y + 144
 						#sibling.height = sibling.y + 264
 						print sibling.index
-					print "hello"
+					#print "hello"
 			else 
 				for sibling in this.siblings
 					if sibling.index > this.index
@@ -328,7 +328,7 @@ class InboundService extends Layer
 				liveCallsLabel.opacity = 0
 				abandonedRateLabel.opacity = 0
 				serviceDoubleClick = 0
-				print "hi"
+				#print "hi"
 				
 			
 		@on Events.Click, () ->
@@ -1414,10 +1414,11 @@ sketch.chat_icon.on Events.Click, ->
 		sketch.chat_icon.backgroundColor = "#fff"
 		for sibling in sketch.chat_icon.siblings
 			sibling.backgroundColor = "transparent"
-		showViewContent(sketch.messageHelpAgent,"up")
+		showViewContent(sketch.messageAlert,"up")
 		hideViewContent(sketch.floorplan)
-		hideViewContent(sketch.messageAlert)
+		hideViewContent(sketch.messageHelpAgent)
 		hideViewContent(sketch.homeContent)
+		sketch.messageDetailContentBubbleTextConfirmation.visible = true
 		#hideMenuOptions()
 	else 
 		sketch.chat_icon.backgroundColor = "#fff"
@@ -1427,8 +1428,18 @@ sketch.chat_icon.on Events.Click, ->
 		hideViewContent(sketch.messageHelpAgent)
 		hideViewContent(sketch.floorplan)
 		hideViewContent(sketch.homeContent)
+		#sketch.messageDetailContentBubbleTextConfirmation.visible = false
+		sketch.messageDetailContentBubbleTextContainer.visible = true
+		#sketch.unreadDot.visible = false
 		
-	
+sketch.messageDetailContentBubbleText.on Events.Click, -> 
+	sketch.messageAlertCallsWaitingNotSelected.visible = true
+	#sketch.MessagingSelectAll.x = 600
+	sketch.MessagingSelectAll.y = 400
+	sketch.MessagingSelectAll.visible = true
+	sketch.MessagingSelectAll.border = 2
+	sketch.MessagingSelectAll.shadowBlur = 5
+
 sketch.map.on Events.Click, ->
 	sketch.map.backgroundColor = "#fff"
 	for sibling in sketch.map.siblings
@@ -1454,7 +1465,7 @@ sketch.setting_icon.on Events.Click, ->
 	#showMenuOptions()
 
 # Everything related to the Notification Screen
-class Notification extends Layer
+###class Notification extends Layer
 	toggle=1
 	
 	activate: ->
@@ -1599,7 +1610,7 @@ confirmationButton = new Layer
 	height: 100
 	y: 270
 	x: 10
-	backgroundColor: "transparent"
+	backgroundColor: "transparent"###
 	
 ###	
 confirmationText = new Layer
@@ -1612,7 +1623,7 @@ confirmationText = new Layer
 	style: statusLabel
 	backgroundColor: "transparent"
 ###
-assignButton.on Events.Click, () -> 
+###assignButton.on Events.Click, () -> 
 	menuBackground.states.switch "Onboard", delay: 0.04
 	confirmationModal.visible = true
 	confirmationButton.on Events.Click, () ->
@@ -1633,7 +1644,7 @@ notifRef = firebase.get "/notifications",(notifs) ->
 			newFlag: notif.newFlag
 		ser.x = 0
 		ser.y = (200)*(notif.id-1)
-
+###
 ###
 agentFlag = 0
 agentsRef = firebase.get "/notifagents",(agents) ->
@@ -1860,7 +1871,7 @@ class Agent extends Layer
 		
 		agentClick = 0
 		@on Events.Click, () ->
-			print "hi"
+			#print "hi"
 			if agentClick == 0 
 				possibleActions.opacity = 1
 				actionDisplay.opacity = 1
@@ -1879,7 +1890,7 @@ class Agent extends Layer
 				agentClick = 0
 			
 		possibleActionsSub.on Events.Click, ->
-			print "hello"
+			#print "hello"
 			#agentClick = 0
 			agentAction_listenON.opacity = 1	
 
@@ -1887,11 +1898,12 @@ class Agent extends Layer
 		messages.on Events.Click, ->
 			sketch.chat_icon.backgroundColor = "#fff"
 			for sibling in sketch.chat_icon.siblings
-			    #sibling.backgroundColor = "transparent"
-				sibling.backgroundColor = "#FFF"
-				showViewContent(sketch.message,"up")
-				hideViewContent(sketch.homeContent)
-				hideViewContent(sketch.floorplan)
+				sibling.backgroundColor = "transparent"
+				#sibling.backgroundColor = "#FFF"
+			showViewContent(sketch.messageHelpAgent,"up")
+			hideViewContent(sketch.homeContent)
+			hideViewContent(sketch.messageAlert)
+			hideViewContent(sketch.floorplan)
 				#hideViewContent(sketch.notificationContent)
 				#hideMenuOptions()
 
@@ -1919,7 +1931,7 @@ sketch.messageAlertCallsWaitingNotSelected.shadowBlur = 5
 
 alertLabel_animation = ->
 	sketch.messageAlertCallsWaitingNotSelected.visible = true
-Utils.delay(0, alertLabel_animation)
+Utils.delay(5, alertLabel_animation)
 
 sketch.alertDismiss.on Events.Click, ->
 	sketch.messageAlertCallsWaitingNotSelected.visible = false
@@ -1953,9 +1965,37 @@ sketch.AmandaSelected.on Events.Click, ->
 
 sketch.amandaAlgarveDeselected.on Events.Click, ->
 	sketch.AmandaSelected.states.switch("On")
+	sketch.alertAddActivated.visible = true
+	#if sketch.AnaMariaSelected.states("Off")
+	#	sketch.alertAddActivated.visible = false
 	
 sketch.AnaMariaSelected.on Events.Click, ->
 	sketch.AnaMariaSelected.states.switch("Off")
 
 sketch.AnaMariaDeselected.on Events.Click, ->
 	sketch.AnaMariaSelected.states.switch("On")
+	sketch.alertAddActivated.visible = true
+
+agentaddConfirmation = ->
+	sketch.agentsAssigned.visible = true
+
+	
+sketch.alertAddActivated.on Events.Click, ->
+	sketch.messageAlertCallsWaitingNotSelected.visible = false
+	sketch.agentsAssigned.shadowBlur = 5
+	#sketch.agentsAssigned.visible = true
+	Utils.delay(0.3, agentaddConfirmation)
+	
+sketch.agentsAssignedOK.on Events.Click, ->
+	sketch.agentsAssigned.visible = false
+	sketch.unreadDot.opacity = 0
+	sketch.messageDetailContentBubbleTextContainer.visible = false
+	sketch.messageDetailContentBubbleTextContainerDone.visible = true
+	
+	if alertExists
+		sketch.messageDetailContentBubbleTextConfirmation.visible = true
+		sketch.messageDetailContentBubbleText.border = 0
+
+		
+	
+	
