@@ -1666,6 +1666,15 @@ agentsRef = firebase.get "/notifagents",(agents) ->
 ###
 
 # Everything related to the Agents
+agentscroll = new ScrollComponent
+	width: 672
+	height: Screen.height
+	scrollHorizontal: false
+	parent: sketch.agentContent
+	
+agentscroll.contentInset=
+	bottom: 200
+	
 class Agent extends Layer
 	sketch.agentAction.opacity = 0
 	sketch.agentActionDropdownServices.opacity = 0
@@ -1687,7 +1696,7 @@ class Agent extends Layer
 		@width= 672
 		@height=192
 		@x = 1110
-		@superLayer = sketch.agentContent
+		@superLayer = agentscroll.content
 		@style = label
 		@borderWidth = 1
 		@borderColor = "rgba(128,128,128,1)"
@@ -2001,4 +2010,4 @@ sketch.agentsAssignedOK.on Events.Click, ->
 		message_alert.visible = false
 		
 	
-	
+
