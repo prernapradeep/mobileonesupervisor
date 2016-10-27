@@ -1,7 +1,6 @@
 # Import file "MobileV1_fixed_copy_Prerna-1" (sizes and positions are scaled 1:2)
 sketch = Framer.Importer.load("imported/MobileV1_fixed_copy_Prerna-1@2x")
 
-
 # Project Info
 # This info is presented in a widget when you share.
 # http://framerjs.com/docs/#info.info
@@ -310,7 +309,7 @@ class InboundService extends Layer
 					if sibling.index > this.index
 						sibling.y = sibling.y + 144
 						#sibling.height = sibling.y + 264
-						print sibling.index
+						#print sibling.index
 					#print "hello"
 			else 
 				for sibling in this.siblings
@@ -1396,7 +1395,11 @@ sketch.screenshotNoSelection.on Events.Click, ->
 	sketch.screenshotSendButtonActive.visible = true
 	
 sketch.screenshotSendButtonActive.on Events.Click, -> 
+	sketch.screenshotSelection.visible = false
 	sketch.notificationScreenshotSent.visible = true
+	
+sketch.screenshotSentConfirmOkay.on Events.Click, -> 
+	sketch.notificationScreenshotSent.visible = false
 	
 sketch.homeicon.on Events.Click, ->
 	sketch.homeicon.backgroundColor = "#fff"
@@ -1409,7 +1412,7 @@ sketch.homeicon.on Events.Click, ->
 	#showMenuOptions()
 	
 sketch.chat_icon.on Events.Click, ->
-	print alertExists
+	#print alertExists
 	if alertExists == false
 		sketch.chat_icon.backgroundColor = "#fff"
 		for sibling in sketch.chat_icon.siblings
@@ -1434,11 +1437,12 @@ sketch.chat_icon.on Events.Click, ->
 		
 sketch.messageDetailContentBubbleText.on Events.Click, -> 
 	sketch.messageAlertCallsWaitingNotSelected.visible = true
-	#sketch.MessagingSelectAll.x = 600
+###sketch.MessagingSelectAll.x = 600
 	sketch.MessagingSelectAll.y = 400
 	sketch.MessagingSelectAll.visible = true
 	sketch.MessagingSelectAll.border = 2
 	sketch.MessagingSelectAll.shadowBlur = 5
+###
 
 sketch.map.on Events.Click, ->
 	sketch.map.backgroundColor = "#fff"
@@ -1450,7 +1454,6 @@ sketch.map.on Events.Click, ->
 	hideViewContent(sketch.messageHelpAgent)
 
 sketch.selectedAgent.on Events.Click, ->
-	print "hi"
 	sketch.floorplanAgentInfo.opacity = 1
 	sketch.floorplanAgentInfo.visible = true
 
@@ -1995,7 +1998,7 @@ sketch.agentsAssignedOK.on Events.Click, ->
 	if alertExists
 		sketch.messageDetailContentBubbleTextConfirmation.visible = true
 		sketch.messageDetailContentBubbleText.border = 0
-
+		message_alert.visible = false
 		
 	
 	
