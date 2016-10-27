@@ -1386,6 +1386,17 @@ showMenuOptions = ->
 	notification_alert.visible = false
 	hideMenuOptions()
 	###
+sketch.screenshotIcon.on Events.Click, ->
+	sketch.screenshotNoSelection.visible = true
+	
+sketch.screenshotNoSelection.on Events.Click, -> 
+	sketch.screenshotNoSelection.visible = false
+	sketch.screenshotSelection.visible = true
+	sketch.screenshotSendButtonGreyedOut.visible = false
+	sketch.screenshotSendButtonActive.visible = true
+	
+sketch.screenshotSendButtonActive.on Events.Click, -> 
+	sketch.notificationScreenshotSent.visible = true
 	
 sketch.homeicon.on Events.Click, ->
 	sketch.homeicon.backgroundColor = "#fff"
@@ -1423,12 +1434,12 @@ sketch.chat_icon.on Events.Click, ->
 		
 sketch.messageDetailContentBubbleText.on Events.Click, -> 
 	sketch.messageAlertCallsWaitingNotSelected.visible = true
-	###sketch.MessagingSelectAll.x = 600
+	#sketch.MessagingSelectAll.x = 600
 	sketch.MessagingSelectAll.y = 400
 	sketch.MessagingSelectAll.visible = true
 	sketch.MessagingSelectAll.border = 2
-	sketch.MessagingSelectAll.shadowBlur = 5###
-	
+	sketch.MessagingSelectAll.shadowBlur = 5
+
 sketch.map.on Events.Click, ->
 	sketch.map.backgroundColor = "#fff"
 	for sibling in sketch.map.siblings
@@ -1437,6 +1448,11 @@ sketch.map.on Events.Click, ->
 	hideViewContent(sketch.homeContent)
 	hideViewContent(sketch.messageAlert)
 	hideViewContent(sketch.messageHelpAgent)
+
+sketch.selectedAgent.on Events.Click, ->
+	print "hi"
+	sketch.floorplanAgentInfo.opacity = 1
+	sketch.floorplanAgentInfo.visible = true
 
 sketch.setting_icon.on Events.Click, ->
 	sketch.setting_icon.backgroundColor = "#fff"
