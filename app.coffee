@@ -1,7 +1,6 @@
 # Import file "MobileV1_fixed_copy_Prerna-1" (sizes and positions are scaled 1:2)
 sketch = Framer.Importer.load("imported/MobileV1_fixed_copy_Prerna-1@2x")
 
-
 # Project Info
 # This info is presented in a widget when you share.
 # http://framerjs.com/docs/#info.info
@@ -310,7 +309,7 @@ class InboundService extends Layer
 					if sibling.index > this.index
 						sibling.y = sibling.y + 144
 						#sibling.height = sibling.y + 264
-						print sibling.index
+						#print sibling.index
 					#print "hello"
 			else 
 				for sibling in this.siblings
@@ -1386,6 +1385,21 @@ showMenuOptions = ->
 	notification_alert.visible = false
 	hideMenuOptions()
 	###
+sketch.screenshotIcon.on Events.Click, ->
+	sketch.screenshotNoSelection.visible = true
+	
+sketch.screenshotNoSelection.on Events.Click, -> 
+	sketch.screenshotNoSelection.visible = false
+	sketch.screenshotSelection.visible = true
+	sketch.screenshotSendButtonGreyedOut.visible = false
+	sketch.screenshotSendButtonActive.visible = true
+	
+sketch.screenshotSendButtonActive.on Events.Click, -> 
+	sketch.screenshotSelection.visible = false
+	sketch.notificationScreenshotSent.visible = true
+	
+sketch.screenshotSentConfirmOkay.on Events.Click, -> 
+	sketch.notificationScreenshotSent.visible = false
 	
 sketch.homeicon.on Events.Click, ->
 	sketch.homeicon.backgroundColor = "#fff"
@@ -1398,7 +1412,7 @@ sketch.homeicon.on Events.Click, ->
 	#showMenuOptions()
 	
 sketch.chat_icon.on Events.Click, ->
-	print alertExists
+	#print alertExists
 	if alertExists == false
 		sketch.chat_icon.backgroundColor = "#fff"
 		for sibling in sketch.chat_icon.siblings
@@ -1423,12 +1437,13 @@ sketch.chat_icon.on Events.Click, ->
 		
 sketch.messageDetailContentBubbleText.on Events.Click, -> 
 	sketch.messageAlertCallsWaitingNotSelected.visible = true
-	###sketch.MessagingSelectAll.x = 600
+###sketch.MessagingSelectAll.x = 600
 	sketch.MessagingSelectAll.y = 400
 	sketch.MessagingSelectAll.visible = true
 	sketch.MessagingSelectAll.border = 2
-	sketch.MessagingSelectAll.shadowBlur = 5###
-	
+	sketch.MessagingSelectAll.shadowBlur = 5
+###
+
 sketch.map.on Events.Click, ->
 	sketch.map.backgroundColor = "#fff"
 	for sibling in sketch.map.siblings
@@ -1437,6 +1452,10 @@ sketch.map.on Events.Click, ->
 	hideViewContent(sketch.homeContent)
 	hideViewContent(sketch.messageAlert)
 	hideViewContent(sketch.messageHelpAgent)
+
+sketch.selectedAgent.on Events.Click, ->
+	sketch.floorplanAgentInfo.opacity = 1
+	sketch.floorplanAgentInfo.visible = true
 
 sketch.setting_icon.on Events.Click, ->
 	sketch.setting_icon.backgroundColor = "#fff"
@@ -1647,6 +1666,15 @@ agentsRef = firebase.get "/notifagents",(agents) ->
 ###
 
 # Everything related to the Agents
+agentscroll = new ScrollComponent
+	width: 672
+	height: Screen.height
+	scrollHorizontal: false
+	parent: sketch.agentContent
+	
+agentscroll.contentInset=
+	bottom: 200
+	
 class Agent extends Layer
 	sketch.agentAction.opacity = 0
 	sketch.agentActionDropdownServices.opacity = 0
@@ -1668,7 +1696,7 @@ class Agent extends Layer
 		@width= 672
 		@height=192
 		@x = 1110
-		@superLayer = sketch.agentContent
+		@superLayer = agentscroll.content
 		@style = label
 		@borderWidth = 1
 		@borderColor = "rgba(128,128,128,1)"
@@ -1979,7 +2007,7 @@ sketch.agentsAssignedOK.on Events.Click, ->
 	if alertExists
 		sketch.messageDetailContentBubbleTextConfirmation.visible = true
 		sketch.messageDetailContentBubbleText.border = 0
-
+		message_alert.visible = false
 		
 	
-	
+
