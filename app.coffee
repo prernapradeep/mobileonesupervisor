@@ -82,8 +82,6 @@ servicesExpandedLabel = {
 	textAlign : "left"
 };
 
-
-
 {TextLayer} = require 'TextLayer'
 
 Framer.Defaults.Animation = 
@@ -94,6 +92,7 @@ gTension = 280 #250
 gFriction = 40 #50
 gVelocity = 0.2 #0.2
 menuClosed = true
+alertExists = false
 
 #Class for the Inbound services + counter/ticker animation
 class InboundService extends Layer
@@ -1336,7 +1335,16 @@ notificationText = new Layer
 alertLabel_animation = ->
 	notificationLabel.visible = true
 Utils.delay(3, alertLabel_animation)###
-
+message_alert = new Layer
+	superLayer: sketch.chat_icon
+	width: 40
+	height: 40
+	borderRadius: 100
+	backgroundColor: "red"
+	x: 120
+	y: 110
+	visible: false
+	
 showViewContent = (content, direction) ->
 	content.visible = true
 	content.opacity = 0
@@ -1384,19 +1392,56 @@ sketch.homeicon.on Events.Click, ->
 	for sibling in sketch.homeicon.siblings
 		sibling.backgroundColor = "transparent"
 	showViewContent(sketch.homeContent,"up")
-	hideViewContent(sketch.message)
-	hideViewContent(sketch.notificationContent)
-	showMenuOptions()
+	hideViewContent(sketch.floorplan)
+	hideViewContent(sketch.messageAlert)
+	hideViewContent(sketch.messageHelpAgent)
+	#showMenuOptions()
 	
 sketch.chat_icon.on Events.Click, ->
-	sketch.chat_icon.backgroundColor = "#fff"
-	for sibling in sketch.chat_icon.siblings
-		sibling.backgroundColor = "transparent"
-	showViewContent(sketch.message,"up")
-	hideViewContent(sketch.homeContent)
-	hideViewContent(sketch.notificationContent)
-	hideMenuOptions()
+	print alertExists
+	if alertExists == false
+		sketch.chat_icon.backgroundColor = "#fff"
+		for sibling in sketch.chat_icon.siblings
+			sibling.backgroundColor = "transparent"
+		showViewContent(sketch.messageHelpAgent,"up")
+		hideViewContent(sketch.floorplan)
+		hideViewContent(sketch.messageAlert)
+		hideViewContent(sketch.homeContent)
+		#hideMenuOptions()
+	else 
+		sketch.chat_icon.backgroundColor = "#fff"
+		for sibling in sketch.chat_icon.siblings
+			sibling.backgroundColor = "transparent"
+		showViewContent(sketch.messageAlert,"up")
+		hideViewContent(sketch.messageHelpAgent)
+		hideViewContent(sketch.floorplan)
+		hideViewContent(sketch.homeContent)
+		
+sketch.messageDetailContentBubbleText.on Events.Click, -> 
+	sketch.MessagingSelectAll.x = 600
+	sketch.MessagingSelectAll.y = 400
+	sketch.MessagingSelectAll.visible = true
+	sketch.MessagingSelectAll.border = 2
+	sketch.MessagingSelectAll.shadowBlur = 5
 	
+sketch.map.on Events.Click, ->
+	sketch.map.backgroundColor = "#fff"
+	for sibling in sketch.map.siblings
+		sibling.backgroundColor = "transparent"
+	showViewContent(sketch.floorplan,"up")
+	hideViewContent(sketch.homeContent)
+	hideViewContent(sketch.messageAlert)
+	hideViewContent(sketch.messageHelpAgent)
+
+sketch.setting_icon.on Events.Click, ->
+	sketch.setting_icon.backgroundColor = "#fff"
+	for sibling in sketch.map.siblings
+		sibling.backgroundColor = "transparent"
+	showViewContent(sketch.floorplan,"up")
+	hideViewContent(sketch.homeContent)
+	hideViewContent(sketch.messageAlert)
+	hideViewContent(sketch.messageHelpAgent)
+	#showMenuOptions()
 
 # Everything related to the Notification Screen
 class Notification extends Layer
@@ -1836,8 +1881,9 @@ class Agent extends Layer
 				sibling.backgroundColor = "#FFF"
 				showViewContent(sketch.message,"up")
 				hideViewContent(sketch.homeContent)
-				hideViewContent(sketch.notificationContent)
-				hideMenuOptions()
+				hideViewContent(sketch.floorplan)
+				#hideViewContent(sketch.notificationContent)
+				#hideMenuOptions()
 
 agentNames = []
 agentsRef = firebase.get "/agents",(agents) ->
@@ -1855,5 +1901,51 @@ agentsRef = firebase.get "/agents",(agents) ->
 		ag.x = 0
 		ag.y = (ag.height)*(agent.id-1)
 
+sketch.messageAlertCallsWaitingNotSelected.x = 600
+sketch.messageAlertCallsWaitingNotSelected.y = 400
+sketch.messageAlertCallsWaitingNotSelected.visible = false
+sketch.messageAlertCallsWaitingNotSelected.border = 2
+sketch.messageAlertCallsWaitingNotSelected.shadowBlur = 5
 
-			
+alertLabel_animation = ->
+	sketch.messageAlertCallsWaitingNotSelected.visible = true
+Utils.delay(0, alertLabel_animation)
+
+sketch.alertDismiss.on Events.Click, ->
+	sketch.messageAlertCallsWaitingNotSelected.visible = false
+	message_alert.visible = true
+	alertExists = true
+	
+sketch.messageAlertSelectAll.on Events.Click, ->
+	sketch.AnaMariaSelected.visible = true
+	sketch.AmandaSelected.visible = true
+	sketch.alertAddActivated.visible = true
+	sketch.messageAlertSelectAll.opacity = 0
+
+sketch.AmandaSelected.states.add
+	On:
+		opacity: 1
+		visible: true
+	Off:
+		opacity: 0
+		visible: false	
+
+sketch.AnaMariaSelected.states.add
+	On:
+		opacity: 1
+		visible: true
+	Off:
+		opacity: 0
+		visible: false
+
+sketch.AmandaSelected.on Events.Click, ->
+	sketch.AmandaSelected.states.switch("Off")
+
+sketch.amandaAlgarveDeselected.on Events.Click, ->
+	sketch.AmandaSelected.states.switch("On")
+	
+sketch.AnaMariaSelected.on Events.Click, ->
+	sketch.AnaMariaSelected.states.switch("Off")
+
+sketch.AnaMariaDeselected.on Events.Click, ->
+	sketch.AnaMariaSelected.states.switch("On")
